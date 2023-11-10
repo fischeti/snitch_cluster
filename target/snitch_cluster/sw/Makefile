@@ -9,11 +9,13 @@ SELECT_RUNTIME ?= rtl
 
 ifeq ($(SELECT_RUNTIME), banshee)
 RUNTIME = runtime/banshee
+else ifeq ($(SELECT_RUNTIME), rtl-no-fesvr)
+RUNTIME = runtime/rtl-no-fesvr
 else
 RUNTIME = runtime/rtl
 endif
 
-SUBDIRS = runtime/banshee runtime/rtl math apps tests
+SUBDIRS = runtime/banshee runtime/rtl math runtime/rtl-no-fesvr apps tests
 
 .PHONY: all $(SUBDIRS)
 
@@ -27,5 +29,5 @@ apps: $(RUNTIME) math
 tests: $(RUNTIME) math
 	$(MAKE) -C $@ $(TARGET)
 
-runtime/rtl runtime/banshee math:
+runtime/rtl runtime/rtl-no-fesvr runtime/banshee math:
 	$(MAKE) -C $@ $(TARGET)

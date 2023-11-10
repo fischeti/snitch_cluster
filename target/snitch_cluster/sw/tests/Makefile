@@ -19,6 +19,8 @@ SRC_DIR     = $(ROOT)/sw/tests
 BUILDDIR    = $(ROOT)/target/snitch_cluster/sw/tests/build
 ifeq ($(SELECT_RUNTIME), banshee)
 RUNTIME_DIR = $(ROOT)/target/snitch_cluster/sw/runtime/banshee
+else ifeq ($(SELECT_RUNTIME), rtl-no-fesvr)
+RUNTIME_DIR = $(ROOT)/target/snitch_cluster/sw/runtime/rtl-no-fesvr
 else
 RUNTIME_DIR = $(ROOT)/target/snitch_cluster/sw/runtime/rtl
 endif
