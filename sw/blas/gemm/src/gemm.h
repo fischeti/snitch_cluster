@@ -1361,7 +1361,7 @@ int gemm(precision_t prec, uint32_t expand, uint32_t setup_ssr,
                                                   frac_m, frac_n, n, prec);
                         } else if (k_tile == 0) {
                             snrt_dma_start_1d(local_c_partial,
-                                              (void*)snrt_zero_memory_ptr(),
+                                              (void*)snrt_zero_memory_ptr(snrt_cluster_idx()),
                                               frac_m * frac_n * prec);
                         }
                     }
