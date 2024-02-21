@@ -2,57 +2,50 @@
 // Solderpad Hardware License, Version 0.51, see LICENSE for details.
 // SPDX-License-Identifier: SHL-0.51
 
-/// RTL Top-level for `fesvr` simulation.
+/// RTL Top-level for DRAMSys simulation.
 module tb_bin;
-  import "DPI-C" function int fesvr_tick();
-  import "DPI-C" function void fesvr_cleanup();
+  import "DPI-C" function void dram_load_elf(input int dram_id, input longint dram_base_addr, input string app_path);
 
   // This can't have an explicit type, otherwise the simulation will not advance
   // for whatever reason.
   // verilog_lint: waive explicit-parameter-storage-type
   localparam TCK = 1ns;
 
-  logic rst_ni, clk_i;
+  logic rst_n, clk;
 
   testharness i_dut (
-    .clk_i,
-    .rst_ni
+    .clk_i(clk),
+    .rst_ni(rst_n)
   );
 
-  // Generate reset
-  initial begin
-    rst_ni = 0;
-    #10ns;
-    rst_ni = 1;
-    #10ns;
-    rst_ni = 0;
-    #10ns;
-    rst_ni = 1;
-  end
+  clk_rst_gen #(
+    .ClkPeriod    ( TCK ),
+    .RstClkCycles ( 5   )
+  ) i_clk_gen (
+    .clk_o  ( clk   ),
+    .rst_no ( rst_n )
+  );
 
-  // Generate clock
-  initial begin
-    forever begin
-      clk_i = 1;
-      #(TCK/2);
-      clk_i = 0;
-      #(TCK/2);
-    end
-  end
+  dram_sim_engine #(
+    .ClkPeriodNs  ( int'(TCK) )
+  ) i_dram_sim_engine (
+    .clk_i  ( clk   ),
+    .rst_ni ( rst_n )
+  );
 
-  // Start `fesvr`
+  string binary;
+
   initial begin
-    automatic int exit_code;
-    while ((exit_code = fesvr_tick()) == 0) #200ns;
-    // Cleanup C++ simulation objects before $finish is called
-    fesvr_cleanup();
-    exit_code >>= 1;
-    if (exit_code > 0) begin
-      $error("[FAILURE] Finished with exit code %2d", exit_code);
+    // Check if `BINARY` is defined
+    if (!$value$plusargs("BINARY=%s", binary)) begin
+      $error("BINARY not defined");
     end else begin
-      $info("[SUCCESS] Program finished successfully");
+      // Preload the binary
+      $display("Preloading binary %s", binary);
+      dram_load_elf(0, 'h8000_0000, binary);
     end
-    $finish;
+
+    $readmemh("test/bootrom.memh", i_dut.i_bootrom_sim_mem.mem, 'h10000);
   end
 
 endmodule
