@@ -88,6 +88,10 @@ VLT_CFLAGS   +=-I ${VLT_BUILDDIR} -I $(VLT_ROOT)/include -I $(VLT_ROOT)/include/
 ANNOTATE_FLAGS      ?= -q --keep-time --addr2line=$(ADDR2LINE)
 LAYOUT_EVENTS_FLAGS ?= --cfg=$(CFG)
 
+# External C++ compiler for QuestaSim
+CXX ?= g++
+CXX_PATH ?= $(shell which $(CXX))
+
 # We need a recent LLVM installation (>11) to compile Verilator.
 # We also need to link the binaries with LLVM's libc++.
 # Define CLANG_PATH to be the path of your Clang installation.
