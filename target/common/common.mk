@@ -83,6 +83,10 @@ VLT_CFLAGS   +=-I ${VLT_BUILDDIR} -I $(VLT_ROOT)/include -I $(VLT_ROOT)/include/
 ANNOTATE_FLAGS      ?= -q --keep-time
 LAYOUT_EVENTS_FLAGS ?= --cfg=$(CFG)
 
+# External C++ compiler for QuestaSim
+CXX ?= g++
+CXX_PATH ?= $(shell which $(CXX))
+
 # We need a recent LLVM installation (>11) to compile Verilator.
 # We also need to link the binaries with LLVM's libc++.
 # Define CLANG_PATH to be the path of your Clang installation.
@@ -187,6 +191,7 @@ define QUESTASIM
 	@echo 'echo $$binary > $(LOGS_DIR)/.rtlbinary' >> $@
 	@echo '${VSIM} +permissive ${VSIM_FLAGS} $$3 -work ${MKFILE_DIR}/${VSIM_BUILDDIR} -c \
 				-ldflags "-Wl,-rpath,${FESVR}/lib -L${FESVR}/lib -lfesvr -lutil" \
+				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} \
 				$(1)_opt +permissive-off ++$$binary ++$$2' >> $@
 	@chmod +x $@
 	@echo "#!/bin/bash" > $@.gui
@@ -195,6 +200,7 @@ define QUESTASIM
 	@echo 'echo $$binary > $(LOGS_DIR)/.rtlbinary' >> $@.gui
 	@echo '${VSIM} +permissive ${VSIM_FLAGS} -work ${MKFILE_DIR}/${VSIM_BUILDDIR} \
 				-ldflags "-Wl,-rpath,${FESVR}/lib -L${FESVR}/lib -lfesvr -lutil" \
+				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} \
 				$(1)_opt +permissive-off ++$$binary ++$$2' >> $@.gui
 	@chmod +x $@.gui
 endef
