@@ -4,7 +4,8 @@
 
 /// RTL Top-level for DRAMSys simulation.
 module tb_bin;
-  import "DPI-C" function void dram_load_elf(input int dram_id, input longint dram_base_addr, input string app_path);
+  import "DPI-C" function int fesvr_tick();
+  import "DPI-C" function void fesvr_cleanup();
 
   // This can't have an explicit type, otherwise the simulation will not advance
   // for whatever reason.
@@ -33,19 +34,19 @@ module tb_bin;
     .rst_ni ( rst_n )
   );
 
-  string binary;
-
+  // Start `fesvr`
   initial begin
-    // Check if `BINARY` is defined
-    if (!$value$plusargs("BINARY=%s", binary)) begin
-      $error("BINARY not defined");
+    automatic int exit_code;
+    while ((exit_code = fesvr_tick()) == 0) #200ns;
+    // Cleanup C++ simulation objects before $finish is called
+    fesvr_cleanup();
+    exit_code >>= 1;
+    if (exit_code > 0) begin
+      $error("[FAILURE] Finished with exit code %2d", exit_code);
     end else begin
-      // Preload the binary
-      $display("Preloading binary %s", binary);
-      dram_load_elf(0, 'h8000_0000, binary);
+      $info("[SUCCESS] Program finished successfully");
     end
-
-    $readmemh("test/bootrom.memh", i_dut.i_bootrom_sim_mem.mem, 'h10000);
+    $finish;
   end
 
 endmodule
