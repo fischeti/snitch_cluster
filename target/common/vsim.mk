@@ -25,7 +25,7 @@ $(BIN_DIR)/$(TARGET).vsim: $(VSIM_BUILDDIR)/compile.vsim.tcl $(VSIM_SOURCES) $(T
 	@echo 'echo $$binary > .rtlbinary' >> $@
 	@echo '$(VSIM) +permissive $(VSIM_FLAGS) $$3 -work $(MKFILE_DIR)/$(VSIM_BUILDDIR) -c \
 				-ldflags "-Wl,-rpath,$(FESVR)/lib -L$(FESVR)/lib -lfesvr -lutil" \
-				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} \
+				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} +BINARY=$$binary \
 				tb_bin_opt +permissive-off ++$$binary ++$$2' >> $@
 	@chmod +x $@
 	@echo "#!/bin/bash" > $@.gui
@@ -33,7 +33,7 @@ $(BIN_DIR)/$(TARGET).vsim: $(VSIM_BUILDDIR)/compile.vsim.tcl $(VSIM_SOURCES) $(T
 	@echo 'echo $$binary > .rtlbinary' >> $@.gui
 	@echo '$(VSIM) +permissive $(VSIM_FLAGS) -work $(MKFILE_DIR)/$(VSIM_BUILDDIR) \
 				-ldflags "-Wl,-rpath,$(FESVR)/lib -L$(FESVR)/lib -lfesvr -lutil" \
-				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} \
+				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} +BINARY=$$binary \
 				tb_bin_opt +permissive-off ++$$binary ++$$2' >> $@.gui
 	@chmod +x $@.gui
 
