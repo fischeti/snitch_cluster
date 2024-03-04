@@ -28,8 +28,7 @@ module tb_bin;
   );
 
   dram_sim_engine #(
-    .ClkPeriodNs  ( int'(TCK) ),
-    .ReturnSymbol ( "tohost"  )
+    .ClkPeriodNs  ( int'(TCK) )
   ) i_dram_sim_engine (
     .clk_i  ( clk   ),
     .rst_ni ( rst_n )
