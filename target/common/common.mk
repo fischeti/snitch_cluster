@@ -191,7 +191,7 @@ define QUESTASIM
 	@echo 'echo $$binary > $(LOGS_DIR)/.rtlbinary' >> $@
 	@echo '${VSIM} +permissive ${VSIM_FLAGS} $$3 -work ${MKFILE_DIR}/${VSIM_BUILDDIR} -c \
 				-ldflags "-Wl,-rpath,${FESVR}/lib -L${FESVR}/lib -lfesvr -lutil" \
-				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} \
+				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} +BINARY=$$binary \
 				$(1)_opt +permissive-off ++$$binary ++$$2' >> $@
 	@chmod +x $@
 	@echo "#!/bin/bash" > $@.gui
@@ -200,7 +200,7 @@ define QUESTASIM
 	@echo 'echo $$binary > $(LOGS_DIR)/.rtlbinary' >> $@.gui
 	@echo '${VSIM} +permissive ${VSIM_FLAGS} -work ${MKFILE_DIR}/${VSIM_BUILDDIR} \
 				-ldflags "-Wl,-rpath,${FESVR}/lib -L${FESVR}/lib -lfesvr -lutil" \
-				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} \
+				${DRAMSYS_VSIM_FLAGS} -cpppath ${CXX_PATH} +BINARY=$$binary \
 				$(1)_opt +permissive-off ++$$binary ++$$2' >> $@.gui
 	@chmod +x $@.gui
 endef
