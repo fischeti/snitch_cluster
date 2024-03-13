@@ -64,6 +64,7 @@ runs:
   - elf: tests/build/printf_simple.elf
   - elf: tests/build/printf_fmtint.elf
   - elf: tests/build/simple.elf
+  - elf: tests/build/flooccamy_test.elf
   - elf: tests/build/team_global.elf
   - elf: tests/build/tls.elf
   - elf: tests/build/varargs_1.elf
