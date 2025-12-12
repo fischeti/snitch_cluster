@@ -20,7 +20,7 @@ source .venv/bin/activate
 # Also protects against "No space left on device" errors
 # occurring when the /tmp folder is filled by other processes.
 mkdir tmp
-TMPDIR=tmp pip install -e .[all]
+TMPDIR=tmp pip install -e .
 rm -rf tmp
 
 # Add simulator binaries to PATH

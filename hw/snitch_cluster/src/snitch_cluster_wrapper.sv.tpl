@@ -205,18 +205,19 @@ module ${cfg['cluster']['name']}_wrapper (
     .sram_cfgs_i (${cfg['cluster']['name']}_pkg::sram_cfgs_t'('0)),
 % endif
 % if cfg['cluster']['narrow_axi_port_expose']:
-    .narrow_ext_req_o (narrow_ext_req_o),
-    .narrow_ext_resp_i (narrow_ext_resp_i),
+    .narrow_ext_req_o,
+    .narrow_ext_resp_i,
 % else:
-    .narrow_ext_req_o (narrow_ext_req_o),
+    .narrow_ext_req_o (),
     .narrow_ext_resp_i (${cfg['cluster']['name']}_pkg::narrow_out_resp_t'('0)),
 % endif
-% if cfg['cluster']['num_exposed_wide_tcdm_ports']==0:
-    .tcdm_ext_req_i (${cfg['cluster']['name']}_pkg::tcdm_dma_req_t'('0)),
+% if cfg['cluster']['num_exposed_wide_tcdm_ports'] > 0:
+    .tcdm_ext_req_i,
+    .tcdm_ext_resp_o,
 % else:
-    .tcdm_ext_req_i (tcdm_ext_req_i),
+    .tcdm_ext_req_i (${cfg['cluster']['name']}_pkg::tcdm_dma_req_t'('0)),
+    .tcdm_ext_resp_o (),
 % endif
-    .tcdm_ext_resp_o (tcdm_ext_resp_o),
     .narrow_in_req_i,
     .narrow_in_resp_o,
     .narrow_out_req_o,
@@ -226,4 +227,13 @@ module ${cfg['cluster']['name']}_wrapper (
     .wide_in_req_i,
     .wide_in_resp_o
   );
+
+% if not cfg['cluster']['narrow_axi_port_expose']:
+    // Tie off narrow AXI port outputs if external narrow AXI port is disabled
+    assign narrow_ext_req_o = '0;
+% endif
+% if cfg['cluster']['num_exposed_wide_tcdm_ports'] == 0:
+    // Tie off external TCDM output ports if none are exposed
+    assign tcdm_ext_resp_o = '0;
+% endif
 endmodule
