@@ -47,7 +47,7 @@ jobs:
 
   build-hw-image:
     name: Deploy hardware development image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-slim
     needs: [docker-meta]
     outputs:
       hw_image_name: ${{ needs.docker-meta.outputs.hw_image_name }}
@@ -63,7 +63,7 @@ jobs:
 
   build-sw-image:
     name: Deploy software development image
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-slim
     needs: [docker-meta]
     outputs:
       sw_image_name: ${{ needs.docker-meta.outputs.sw_image_name }}
